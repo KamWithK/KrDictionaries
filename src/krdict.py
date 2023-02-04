@@ -34,7 +34,7 @@ BETWEEN_SPECIAL_BRACKETS = r"(?<=「).*(?=」)"
 dictionary = []
 
 class KrdictSpider(scrapy.Spider):
-    name = "naver"
+    name = "krdict"
 
     def start_requests(self):
         yield scrapy.Request(url=URL(1), callback=self.start_parse)
