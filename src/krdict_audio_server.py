@@ -18,17 +18,16 @@ with open(DICTIONARY_PATH, "r", encoding="utf-8") as file:
 def has_audio(entry):
     return entry["audio_url"] not in ["", None]
 
-def word_match(word: str, hanja: str, entry):
+def word_match(word: str, entry):
     word_satisfied = entry["word"] == word
-    hanja_satisfied = hanja == entry["hanja"] or hanja in ["", None]# or entry["hanja"] in ["", None]
 
-    return word_satisfied and hanja_satisfied
+    return word_satisfied
 
-def word_audio(word: str, hanja: str=""):
+def word_audio(word: str):
     return [{
-        "name": entry["hanja"] + " - " + entry["word"],
+        "name": entry["word"],
         "url": entry["audio_url"]
-    } for entry in dictionary if has_audio(entry) and word_match(word, hanja, entry)]
+    } for entry in dictionary if has_audio(entry) and word_match(word, entry)]
 
 class AudioServer(SimpleHTTPRequestHandler):
     # By default, SimpleHTTPRequestHandler logs to stderr
@@ -51,12 +50,11 @@ class AudioServer(SimpleHTTPRequestHandler):
         if "term" in query_components:
             term = query_components["term"][0]
 
-        reading = query_components["reading"][0] if "reading" in query_components else ""
 
         # Yomichan formatted response
         response = {
             "type": "audioSourceList",
-            "audioSources": word_audio(reading, term)
+            "audioSources": word_audio(term)
         }
 
         # UTF-8 encoded JSON response
